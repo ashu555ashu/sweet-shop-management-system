@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>Sweet Shop - Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f9f9f9; margin:0; padding:20px; }
+
+        .login-page { display:flex; justify-content:center; align-items:center; min-height:100vh; }
+
+        .login-card { display:flex; gap:40px; width:800px; max-width:95%; background:#fff; border-radius:8px; box-shadow:0 0 10px #ccc; overflow:hidden; }
+
+        .left-image { flex:1; min-width:200px; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg,#fff7f7,#fff); }
+        .left-image img { max-width:100%; height:auto; display:block; padding:20px; object-fit:contain; }
+
+        .form-container { flex:1; padding:40px; box-sizing:border-box; }
+
+        input { width: 100%; padding: 10px; margin: 10px 0; box-sizing:border-box; }
+        button { padding: 15px; width: 100%; background: #00a2ff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        a { display: block; margin-top: 10px; text-align: center; }
+
+        @media (max-width: 600px) {
+            .login-card { flex-direction: column; }
+            .left-image, .form-container { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-page">
+        <div class="login-card">
+            <div class="left-image">
+                <img src="image.png" alt="Sweet Shop">
+            </div>
+            <div class="form-container">
+                <h2>Login</h2>
+                <form method="post">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password1" placeholder="Password" required>
+            <input type="password" name="password2" placeholder="Confirm Password" required>
+            <input type="textarea" name="Address"   placeholder="Address">
+            <button type="submit">Register</button>
+        </form>
+                <a href="{% url 'register' %}">Don't have an account? Register</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<

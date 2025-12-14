@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Management</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f8;
+            padding: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+        }
+
+        .add-btn { background: #28a745; }
+        .delete-btn { background: #dc3545; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #00a2ff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Staff Members</h2>
+
+<div class="top-bar">
+    <a href="{% url 'accounts:add_staff' %}" class="btn add-btn">+ Add Staff</a>
+    <a href="{% url 'shop:shop_home' %}" class="btn">Back to Shop</a>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in staff %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>Staff</td>
+            <td>
+                <a href="{% url 'accounts:remove_staff' user.id %}"
+                   class="btn delete-btn"
+                   onclick="return confirm('Remove this staff member?')">
+                   Remove
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No staff added yet</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>

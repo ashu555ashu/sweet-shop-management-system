@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% if sweet %}Edit Sweet{% else %}Add Sweet{% endif %}</title>
+    <style>
+        body { font-family: Arial; margin: 0; padding: 0; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px #ccc; }
+        h2 { text-align: center; margin-bottom: 30px; }
+        label { display: block; margin-top: 15px; font-weight: 600; }
+        input, textarea { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-top: 5px; }
+        button { margin-top: 20px; padding: 12px 25px; background: #00a2ff; color: #fff; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #007acc; }
+        .existing-photo { width: 150px; margin-top: 10px; border-radius: 8px; display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>{% if sweet %}Edit Sweet{% else %}Add Sweet{% endif %}</h2>
+
+        {% if errors %}
+            <div style="background:#ffe6e6; padding:10px; border-radius:6px; margin-bottom:10px; color:#900;">
+                <ul style="margin:0 0 0 18px;">
+                    {% for err in errors %}
+                        <li>{{ err }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" 
+              action="{% if sweet %}{% url 'sweet:edit_sweet' sweet.id %}{% else %}{% url 'sweet:add_sweet' %}{% endif %}">
+            {% csrf_token %}
+    
+            <label>Name</label>
+            <input type="text" name="name" value="{{ form_values.name|default:sweet.name|default_if_none:'' }}" required>
+
+            <label>Description</label>
+            <textarea name="description" rows="4">{{ form_values.description|default:sweet.description|default_if_none:'' }}</textarea>
+
+            <label>Price</label>
+            <input type="number" name="price" step="0.01" value="{{ form_values.price|default:sweet.price|default_if_none:'' }}" required>
+
+            <label>Quantity</label>
+            <input type="number" name="quantity" value="{{ form_values.quantity|default:sweet.quantity|default_if_none:'' }}" required>
+
+            <label for="sweet_id">Sweet ID</label>
+            <input type="text" name="sweet_id" id="sweet_id" value="{{ form_values.sweet_id|default:sweet.sweet_id|default:'' }}" required>
+
+            <label for="category">Category</label>
+            <input type="text" name="category" id="category" value="{{ form_values.category|default:sweet.category|default:'' }}" required>
+
+            <label>Photo</label>
+            <input type="file" name="photo">
+            {% if sweet and sweet.photo %}
+                <img src="{{ sweet.photo.url }}" class="existing-photo" alt="Existing Photo">
+            {% endif %}
+
+            <button type="submit">{% if sweet %}Update Sweet{% else %}Add Sweet{% endif %}</button>
+        </form>
+    </div>
+</body>
+</html>

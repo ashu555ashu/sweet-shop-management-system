@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h2>✅ Order Placed Successfully!</h2>
+    <p>Order ID: {{ order.id }}</p>
+    <p>Total: ₹{{ order.total_price }}</p>
+    <a href="{% url 'order:my_orders' %}">View My Orders</a>
+    <a href="{% url 'shop:shop_home' %}">Continue Shopping</a>
+</div>
+{% endblock %}

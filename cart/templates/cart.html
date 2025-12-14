@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px #ccc;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #00a2ff;
+            color: white;
+        }
+
+        td img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .total {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .checkout-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #ff4f9a;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .checkout-btn:hover {
+            background: #ff2f88;
+        }
+
+        .remove-btn {
+            padding: 5px 10px;
+            background: #ff4f4f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .remove-btn:hover {
+            background: #ff1a1a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>My Cart</h2>
+
+    {% if cart_items %}
+    <table>
+        <thead>
+            <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+       <tbody>
+    {% for item in cart_items %}
+    <tr data-sweet-id="{{ item.sweet.id }}">
+        <td><img src="{% static item.sweet.photo %}" alt="{{ item.sweet.name }}"></td>
+        <td>{{ item.sweet.name }}</td>
+        <td>₹{{ item.sweet.price }}</td>
+        <td>
+            <button class="qty-btn" onclick="updateQuantity({{ item.sweet.id }}, -1)">-</button>
+            <span class="qty">{{ item.quantity }}</span>
+            <button class="qty-btn" onclick="updateQuantity({{ item.sweet.id }}, 1)">+</button>
+        </td>
+        <td class="subtotal">₹{{ item.subtotal }}</td>
+        <td>
+            <button class="remove-btn" onclick="removeItem({{ item.sweet.id }})">Remove</button>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+
+    </table>
+
+    <div class="total">Total: ₹{{ total }}</div>
+
+    <a href="{% url 'payment:checkout' %}" class="checkout-btn">Proceed to Payment</a>
+
+    {% else %}
+    <p style="text-align:center; margin-top:20px;">Your cart is empty!</p>
+    {% endif %}
+
+</div>
+<script>
+    function updateQuantity(sweetId, change) {
+        fetch(`/cart/update/${sweetId}/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+            body: JSON.stringify({ change: change })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.removed) {
+                // Remove row if quantity is 0
+                document.querySelector(`tr[data-sweet-id="${sweetId}"]`).remove();
+            } else {
+                // Update quantity and subtotal
+                const row = document.querySelector(`tr[data-sweet-id="${sweetId}"]`);
+                row.querySelector('.qty').innerText = data.quantity;
+                row.querySelector('.subtotal').innerText = `₹${data.subtotal}`;
+            }
+            document.querySelector('.total').innerText = `Total: ₹${data.total}`;
+        });
+    }
+
+    function removeItem(sweetId) {
+        fetch(`/cart/remove/${sweetId}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.querySelector(`tr[data-sweet-id="${sweetId}"]`).remove();
+            document.querySelector('.total').innerText = `Total: ₹${data.total}`;
+        });
+    }
+</script>
+
+</body>
+</html>
