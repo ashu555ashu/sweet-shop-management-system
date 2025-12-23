@@ -76,7 +76,7 @@ A Django-based web application for managing a sweet shop. Core functionality for
 
 &nbsp;  git clone https://github.com/ashu555ashu/sweet-shop-management-system.git
 
-&nbsp;  cd sweet-shop-management-system
+&nbsp;  cd sweet-shop-management-system.
 
 
 
